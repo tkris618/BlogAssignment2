@@ -72,7 +72,6 @@ do{
                 }
                 if(blog != null) 
                 {
-                    Console.WriteLine(key);
                     Console.WriteLine("Enter post title: ");
                     var title = Console.ReadLine();
 
@@ -93,7 +92,7 @@ do{
         }
         if(choice == "4"){
 
-            Console.WriteLine("Would you like to view posts?");
+            Console.WriteLine("Would you like to view posts? (Y/N)");
             string resp = Console.ReadLine().ToUpper();
             
             if(resp != "Y") {break;}
@@ -103,28 +102,20 @@ do{
 
             using (var context = new BloggingContext())
             {
-                var blog = context.Blogs
-                            .Where(b => b.Name == blogName)
-                            .FirstOrDefault();
-
-                if (blog == null)
+                var blogSearch = db.Blogs.Where(n => n.Name == blogName).Select(x => x.BlogId);
+                var postSearch = db.Posts.Where(m => blogSearch.Contains(m.BlogId));
+                if (postSearch == null)
                 {
                     Console.WriteLine("Blog does not exist.");
                 }
-                if(blog != null)
+                if(postSearch != null)
                 {
-                     var query = db.Blogs.OrderBy(b => b.Name);
-
-                     Console.WriteLine("All posts in {name}: ", blogName);
-
-                     foreach(var post in query)
+                     foreach(var post in postSearch)
                      {
-                        Console.WriteLine(post);
+                        Console.WriteLine(post.Title + " " + post.Content);
                      }
                 }
             }
-
-
         }
 
 }while (choice == "1" || choice == "2" || choice == "3" || choice == "4");
